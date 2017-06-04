@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>瀑布流</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .box{
+            width: 960px;
+            margin: 0 auto;
+        }
+        .box ul{
+            float: left;
+            width: 300px;
+            margin: 0 10px;
+        }
+        .box ul li img{
+            width: 300px;
+            margin-bottom: 15px;
+        }
+    </style>
+    <script>
+        window.onload = function(){
+            // 获取元素
+            var oBox = document.getElementById('box');
+            var oUl  = document.getElementsByTagName('ul');
+            var vH   = document.documentElement.clientHeight;
+
+            // 循环动态添加
+            creaeElement();
+            function creaeElement(){
+                for(var i = 0 ; i < 21 ; i ++){
+                    // 创建img标签
+                    var oImg = document.createElement('img');
+                    oImg.src = 'images/' + i + '.jpg';
+                    // 创建li标签
+                    var oLi = document.createElement('li');
+                    oLi.appendChild(oImg);
+                    //获取最小ul的索引
+                    var minIndex = checkHeight(oUl);
+                    oUl[minIndex].appendChild(oLi);
+                }
+            }
+
+            //滚动事件
+            window.onscroll = function(){
+                var sTop = document.documentElement.scrollTop || document.body.scrollTop;
+                //滚动条的高度 + 浏览器的高度 = 内容区域的高度
+                if( sTop + vH > document.body.scrollHeight*0.8 ){
+                    creaeElement();
+                }
+            }
+        }
+
+
+        // 获取最小ul的索引
+        function checkHeight(oUl){
+            //初始化
+            var height = 1000000;
+            var index  = 0;
+            for(var i = 0 ; i < oUl.length ; i++){
+
+                var nowHeight = oUl[i].offsetHeight;
+
+                if( nowHeight < height ){
+                    height = nowHeight;
+                    index = i;
+                }
+            }
+
+            return index ;
+        }
+    </script>
+</head>
+<body>
+    <pre>
+        原理：
+            1、外层容器浮动
+            2、判断某一容器为最小容器
+            3、将内容插到最小容器内
+            4、当滚动条滚动到一定程度 循环执行2和3
+        代码要点：
+            1、创建元素 document.createElement('元素')
+            2、获得屏幕的宽和高，如果不做横向的瀑布，获取高就可以
+               document.documentElement.clientHeight
+            3、滚动条事件window.onscroll
+            4、获得滚动条高度
+               document.documentElement.scrollTop
+               document.body.scrollTop
+            5、滚动后body高度
+               document.body.scrollHeight
+    </pre>
+    <div id="box" class="box">
+        <ul></ul>
+        <ul></ul>
+        <ul></ul>
+    </div>
+</body>
+</html>
